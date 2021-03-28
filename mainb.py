@@ -1,7 +1,5 @@
-from datetime import datetime
+import brev
 
 def handler(request):
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
-    return "main.b - " + current_time
+    return brev("foonode")
 
