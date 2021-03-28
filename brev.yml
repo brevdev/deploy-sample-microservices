@@ -11,4 +11,4 @@ services:
   - name: 'foonode'
     runtime: 'nodejs14'
     handler: 'index.handler'
-    type: 'cron(@every 10s)'
+    type: 'http'
