@@ -1,5 +1,5 @@
 import brev
 
 def handler(request):
-    return brev.http_request("foonode")['Payload']
+    return brev.http_request("foonode")
 
