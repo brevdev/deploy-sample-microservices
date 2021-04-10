@@ -5,6 +5,3 @@ services:
     runtime: 'python3'
     handler: 'maina.handler'
     type: 'http'
-databases:
-  - name: 'foo'
-    engine: 'mysql'
