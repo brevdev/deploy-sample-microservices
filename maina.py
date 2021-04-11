@@ -24,7 +24,7 @@ def handler(request):
                 "body": results,
             }
         if method == "POST":
-            payload = request["requestContext"]["body"]
+            payload = request["body"]
             results = put_user(json.loads(payload))
             return {
                 "statusCode": 201,
