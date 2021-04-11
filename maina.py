@@ -1,14 +1,22 @@
 from datetime import datetime
+from flask import Flask
 
+import aws_lambda_wsgi
 import brev
 import json
 
+app = Flask(__name__)
 foo_db = brev.db("foo")
 
+@app.route('/')
+def test():
+    return {'message': 'OOOOOK!'}
 
-def handler(request):
+
+def handler(request, context):
     init_db()
 
+    return aws_lambda_wsgi.response(app, request, context)
     print(request)
 
     path = request["requestContext"]["http"]["path"]
