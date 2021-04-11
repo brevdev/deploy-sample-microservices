@@ -5,6 +5,7 @@ import json
 
 foo_db = brev.db("foo")
 
+
 def handler(request):
     init_db()
 
@@ -15,10 +16,10 @@ def handler(request):
 
     if path == "/users":
         if method == "GET":
-            data = get_users()
+            users = get_users()
             results = []
-            for k, v in data:
-                results.append(v)
+            for user in users:
+                results.append(user)
             return {
                 "statusCode": 200,
                 "body": results,
@@ -79,6 +80,7 @@ def get_users():
             }
     return results
 
+
 def put_user(user):
     statement = (
         "INSERT INTO users "
@@ -102,6 +104,7 @@ def put_user(user):
         "last_name": user["last_name"],
     }
 
+
 def get_user(user_id):
     statement = (
         "SELECT id, first_name, last_name FROM users "
@@ -121,6 +124,7 @@ def get_user(user_id):
                 "last_name": last_name,
             }
     return results
+
 
 def delete_user(user_id):
     statement = (
