@@ -7,7 +7,7 @@ import aws_lambda_wsgi
 import brev
 
 app = Flask(__name__)
-db = brev.db("foo_db")
+db = brev.db("foo")
 
 
 # Entrypoint
@@ -66,7 +66,6 @@ def init_db():
     )
     with closing(db.cursor()) as c:
         c.execute(users_table)
-        db.commit()
 
 def get_users():
     statement = (
