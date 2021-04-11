@@ -19,7 +19,7 @@ def handler(request):
             users = get_users()
             return {
                 "statusCode": 200,
-                "body": users.values(),
+                "body": list(users.values()),
             }
         if method == "POST":
             payload = request["body"]
