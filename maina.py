@@ -60,6 +60,23 @@ def init_db():
     with foo_db.cursor() as c:
         c.execute(users_table)
 
+
+def get_users():
+    statement = (
+        "SELECT id, first_name, last_name FROM users"
+    )
+
+    results = {}
+    with foo_db.cursor() as c:
+        c.execute(statement)
+        for (user_id, first_name, last_name) in c:
+            results[user_id] = {
+                "id": user_id,
+                "first_name": first_name,
+                "last_name": last_name,
+            }
+    return results
+
 def put_user(first_name, last_name):
     statement = (
         "INSERT INTO users "
@@ -83,9 +100,9 @@ def put_user(first_name, last_name):
         "last_name": last_name,
     }
 
-def get_users(user_id):
+def get_user(user_id):
     statement = (
-        "SELECT first_name, last_name FROM users "
+        "SELECT id, first_name, last_name FROM users "
         "WHERE id = %(id)s"
     )
     data = {
