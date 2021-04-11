@@ -108,7 +108,8 @@ def put_user(user):
                 "last_name": last_name,
             }
 
-    print("put: " + results)
+    print("put: ")
+    print(results)
     return {
         "id": result_id,
         "first_name": user["first_name"],
