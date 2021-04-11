@@ -22,6 +22,7 @@ def handler(request):
                 "body": results,
             }
         if method == "POST":
+            print(payload)
             payload = request["requestContext"]["body"]
             results = put_user(json.loads(payload))
             return {
@@ -34,18 +35,18 @@ def handler(request):
             "body": "Not found",
         }
 
-    with foo_db.cursor() as cursor:
-        cursor.execute(query)
-        for l in cursor:
-            print(l)
-    brev.db_query("foo", "SHOW TABLES;")
-    brev.db_query("foo", "SELECT COUNT(1);")
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
-    return {
-        "message": "main.a - " + current_time,
-        "request": request,
-    }
+    # with foo_db.cursor() as cursor:
+    #     cursor.execute(query)
+    #     for l in cursor:
+    #         print(l)
+    # brev.db_query("foo", "SHOW TABLES;")
+    # brev.db_query("foo", "SELECT COUNT(1);")
+    # now = datetime.now()
+    # current_time = now.strftime("%H:%M:%S")
+    # return {
+    #     "message": "main.a - " + current_time,
+    #     "request": request,
+    # }
 
 
 def init_db():
