@@ -22,8 +22,8 @@ def handler(request, context):
 
 @app.route('/users', methods=['GET', 'POST'])
 def users():
-
     if request.method == 'POST':
+        print("post!")
         payload = request.get_json()
         user = put_user(payload)
         return jsonify(user), 201
@@ -96,10 +96,12 @@ def put_user(user):
     }
 
     result_id = 0
+    print(get_users())
     with closing(db.cursor()) as c:
         c.execute(statement, data)
-        # db.commit()
+        print(get_users())
         result_id = c.lastrowid
+    print(get_users())
 
     return {
         "id": result_id,
