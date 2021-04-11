@@ -8,6 +8,8 @@ foo_db = brev.db("foo")
 def handler(request):
     init_db()
 
+    print(request)
+
     path = request["requestContext"]["http"]["path"]
     method = request["requestContext"]["http"]["method"]
 
@@ -22,7 +24,6 @@ def handler(request):
                 "body": results,
             }
         if method == "POST":
-            print(payload)
             payload = request["requestContext"]["body"]
             results = put_user(json.loads(payload))
             return {
