@@ -66,6 +66,7 @@ def init_db():
     with db.cursor() as c:
         c.execute(users_table)
         db.commit()
+        print(c)
 
 def get_users():
     statement = (
@@ -96,20 +97,12 @@ def put_user(user):
     }
 
     result_id = 0
-    results = {}
     with db.cursor() as c:
         c.execute(statement, data)
         result_id = c.lastrowid
         db.commit()
-        for (user_id, first_name, last_name) in c:
-            results[user_id] = {
-                "id": user_id,
-                "first_name": first_name,
-                "last_name": last_name,
-            }
+        print(c)
 
-    print("put: ")
-    print(results)
     return {
         "id": result_id,
         "first_name": user["first_name"],
