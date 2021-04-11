@@ -1,3 +1,4 @@
+from contextlib import closing
 from datetime import datetime
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import HTTPException, NotFound
@@ -63,10 +64,9 @@ def init_db():
         "  PRIMARY KEY (`id`)"
         ") ENGINE=InnoDB"
     )
-    with db.cursor() as c:
+    with closing(db.cursor()) as c:
         c.execute(users_table)
         db.commit()
-        print(str(c))
 
 def get_users():
     statement = (
@@ -74,7 +74,7 @@ def get_users():
     )
 
     results = {}
-    with db.cursor() as c:
+    with closing(db.cursor()) as c:
         c.execute(statement)
         for (user_id, first_name, last_name) in c:
             results[user_id] = {
@@ -97,11 +97,10 @@ def put_user(user):
     }
 
     result_id = 0
-    with db.cursor() as c:
+    with closing(db.cursor()) as c:
         c.execute(statement, data)
-        result_id = c.lastrowid
         db.commit()
-        print(str(c))
+        result_id = c.lastrowid
 
     return {
         "id": result_id,
@@ -120,7 +119,7 @@ def get_user(user_id):
     }
 
     results = {}
-    with db.cursor() as c:
+    with closing(db.cursor()) as c:
         c.execute(statement, data)
         for (user_id, first_name, last_name) in c:
             results[user_id] = {
@@ -141,7 +140,6 @@ def delete_user(user_id):
     data = {
         "id": user_id,
     }
-    with db.cursor() as c:
+    with closing(db.cursor()) as c:
         c.execute(statement, data)
         db.commit()
-        print(str(c))
