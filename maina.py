@@ -1,13 +1,22 @@
 from datetime import datetime
 from flask import Flask, request, jsonify
-from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import HTTPException, NotFound
 
 import aws_lambda_wsgi
 import brev
-import json
 
 app = Flask(__name__)
 foo_db = brev.db("foo")
+
+
+# Entrypoint
+def handler(request, context):
+
+    # execute database upgrades
+    init_db()
+
+    # route requests
+    return aws_lambda_wsgi.response(app, request, context)
 
 
 @app.route('/users', methods=['GET', 'POST'])
@@ -25,65 +34,24 @@ def users():
 
 @app.route('/users/<user_id>', methods=['GET', 'DELETE'])
 def user(user_id):
+    user = get_user(user_id).get(user_id, None)
+    if not user:
+        raise NotFound()
 
     if request.method == 'DELETE':
         delete_user(user_id)
-        return jsonify({"message":"deleted"}), 202
+        return jsonify(user), 202
 
     else:
-        user = get_user(user_id)
         return jsonify(user), 200
 
 
+@app.errorhandler(Exception)
 def errors(e):
     code = 500
     if isinstance(e, HTTPException):
         code = e.code
     return jsonify(error=str(e)), code
-
-
-def handler(request, context):
-    init_db()
-    for cls in HTTPException.__subclasses__():
-        app.register_error_handler(cls, errors)
-    return aws_lambda_wsgi.response(app, request, context)
-    # print(request)
-
-    # path = request["requestContext"]["http"]["path"]
-    # method = request["requestContext"]["http"]["method"]
-
-    # if path == "/users":
-    #     if method == "GET":
-    #         users = get_users()
-    #         return {
-    #             "statusCode": 200,
-    #             "body": list(users.values()),
-    #         }
-    #     if method == "POST":
-    #         payload = request["body"]
-    #         results = put_user(json.loads(payload))
-    #         return {
-    #             "statusCode": 201,
-    #             "body": results,
-    #         }
-    # else:
-    #     return {
-    #         "statusCode": 404,
-    #         "body": "Not found",
-    #     }
-
-    # with foo_db.cursor() as cursor:
-    #     cursor.execute(query)
-    #     for l in cursor:
-    #         print(l)
-    # brev.db_query("foo", "SHOW TABLES;")
-    # brev.db_query("foo", "SELECT COUNT(1);")
-    # now = datetime.now()
-    # current_time = now.strftime("%H:%M:%S")
-    # return {
-    #     "message": "main.a - " + current_time,
-    #     "request": request,
-    # }
 
 
 def init_db():
