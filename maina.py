@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask
+from flask import Flask, request, jsonify
 
 import aws_lambda_wsgi
 import brev
@@ -8,39 +8,59 @@ import json
 app = Flask(__name__)
 foo_db = brev.db("foo")
 
-@app.route('/')
-def test():
-    return {'message': 'OOOOOK!'}
+
+@app.route('/users', methods=['GET', 'POST'])
+def users():
+
+    if request.method == 'POST':
+        payload = request.get_json()
+        user = put_user(payload)
+        return jsonify(user), 201
+
+    else:
+        users = get_users()
+        return jsonify(list(users.values())), 200
+
+
+@app.route('/users/<user_id>', methods=['GET', 'DELETE'])
+def user(user_id):
+
+    if request.method == 'DELETE':
+        delete_user(user_id)
+        return jsonify({"message":"deleted"}), 202
+
+    else:
+        user = get_user(user_id)
+        return jsonify(user), 200
 
 
 def handler(request, context):
     init_db()
-
     return aws_lambda_wsgi.response(app, request, context)
-    print(request)
+    # print(request)
 
-    path = request["requestContext"]["http"]["path"]
-    method = request["requestContext"]["http"]["method"]
+    # path = request["requestContext"]["http"]["path"]
+    # method = request["requestContext"]["http"]["method"]
 
-    if path == "/users":
-        if method == "GET":
-            users = get_users()
-            return {
-                "statusCode": 200,
-                "body": list(users.values()),
-            }
-        if method == "POST":
-            payload = request["body"]
-            results = put_user(json.loads(payload))
-            return {
-                "statusCode": 201,
-                "body": results,
-            }
-    else:
-        return {
-            "statusCode": 404,
-            "body": "Not found",
-        }
+    # if path == "/users":
+    #     if method == "GET":
+    #         users = get_users()
+    #         return {
+    #             "statusCode": 200,
+    #             "body": list(users.values()),
+    #         }
+    #     if method == "POST":
+    #         payload = request["body"]
+    #         results = put_user(json.loads(payload))
+    #         return {
+    #             "statusCode": 201,
+    #             "body": results,
+    #         }
+    # else:
+    #     return {
+    #         "statusCode": 404,
+    #         "body": "Not found",
+    #     }
 
     # with foo_db.cursor() as cursor:
     #     cursor.execute(query)
