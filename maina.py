@@ -6,7 +6,7 @@ import aws_lambda_wsgi
 import brev
 
 app = Flask(__name__)
-foo_db = brev.db("foo")
+db = brev.db("users")
 
 
 # Entrypoint
@@ -24,7 +24,6 @@ def users():
 
     if request.method == 'POST':
         payload = request.get_json()
-        print("creating user")
         user = put_user(payload)
         return jsonify(user), 201
 
@@ -64,7 +63,7 @@ def init_db():
         "  PRIMARY KEY (`id`)"
         ") ENGINE=InnoDB"
     )
-    with foo_db.cursor() as c:
+    with db.cursor() as c:
         c.execute(users_table)
 
 
@@ -74,7 +73,7 @@ def get_users():
     )
 
     results = {}
-    with foo_db.cursor() as c:
+    with db.cursor() as c:
         c.execute(statement)
         for (user_id, first_name, last_name) in c:
             results[user_id] = {
@@ -86,7 +85,6 @@ def get_users():
 
 
 def put_user(user):
-    print("in 'put_user'")
     statement = (
         "INSERT INTO users "
         "(first_name, last_name) "
@@ -98,12 +96,10 @@ def put_user(user):
     }
 
     result_id = 0
-    with foo_db.cursor() as c:
-        print("executing: " + statement)
+    with db.cursor() as c:
         c.execute(statement, data)
         result_id = c.lastrowid
-        print("result: " + str(result_id))
-        # foo_db.commit()
+        db.commit()
 
     return {
         "id": result_id,
@@ -122,7 +118,7 @@ def get_user(user_id):
     }
 
     results = {}
-    with foo_db.cursor() as c:
+    with db.cursor() as c:
         c.execute(statement, data)
         for (user_id, first_name, last_name) in c:
             results[user_id] = {
@@ -143,6 +139,6 @@ def delete_user(user_id):
     data = {
         "id": user_id,
     }
-    with foo_db.cursor() as c:
+    with db.cursor() as c:
         c.execute(statement, data)
-        # foo_db.commit()
+        db.commit()
