@@ -77,15 +77,15 @@ def get_users():
             }
     return results
 
-def put_user(first_name, last_name):
+def put_user(user):
     statement = (
         "INSERT INTO users "
         "(first_name, last_name) "
         "VALUES (%(first_name)s, %(last_name)s)"
     )
     data = {
-        "first_name": first_name,
-        "last_name": last_name,
+        "first_name": user[first_name],
+        "last_name": user[last_name],
     }
 
     result_id = 0
@@ -96,8 +96,8 @@ def put_user(first_name, last_name):
 
     return {
         "id": result_id,
-        "first_name": first_name,
-        "last_name": last_name,
+        "first_name": user["first_name"],
+        "last_name": user["last_name"],
     }
 
 def get_user(user_id):
