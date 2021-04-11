@@ -29,12 +29,12 @@ def users():
 
     else:
         users = get_users()
-        return jsonify(list(users.values())), 200
+        return jsonify(users), 200
 
 
 @app.route('/users/<user_id>', methods=['GET', 'DELETE'])
 def user(user_id):
-    user = get_user(user_id).get(user_id, None)
+    user = get_user(user_id)
     if not user:
         raise NotFound()
 
@@ -81,7 +81,7 @@ def get_users():
                 "first_name": first_name,
                 "last_name": last_name,
             }
-    return results
+    return list(results.values())
 
 
 def put_user(user):
@@ -126,8 +126,10 @@ def get_user(user_id):
                 "first_name": first_name,
                 "last_name": last_name,
             }
-    return results
-
+    if len(results) != 1:
+        return None
+    else:
+        return results[user_id]
 
 def delete_user(user_id):
     statement = (
