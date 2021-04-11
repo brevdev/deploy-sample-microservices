@@ -86,8 +86,8 @@ def put_user(user):
         "VALUES (%(first_name)s, %(last_name)s)"
     )
     data = {
-        "first_name": user[first_name],
-        "last_name": user[last_name],
+        "first_name": user["first_name"],
+        "last_name": user["last_name"],
     }
 
     result_id = 0
