@@ -24,6 +24,7 @@ def users():
 
     if request.method == 'POST':
         payload = request.get_json()
+        print("creating user")
         user = put_user(payload)
         return jsonify(user), 201
 
@@ -85,6 +86,7 @@ def get_users():
 
 
 def put_user(user):
+    print("in 'put_user'")
     statement = (
         "INSERT INTO users "
         "(first_name, last_name) "
@@ -97,8 +99,10 @@ def put_user(user):
 
     result_id = 0
     with foo_db.cursor() as c:
+        print("executing: " + statement)
         c.execute(statement, data)
         result_id = c.lastrowid
+        print("result: " + str(result_id))
         # foo_db.commit()
 
     return {
