@@ -7,5 +7,7 @@ def handler(request):
     brev.db_query("foo", "SELECT COUNT(1);")
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
-    return "main.a - " + current_time
+    return {
+        "message": "main.a - " + current_time,
+    }
 
