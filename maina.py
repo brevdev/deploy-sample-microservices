@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import Flask, request, jsonify
+from werkzeug.exceptions import HTTPException
 
 import aws_lambda_wsgi
 import brev
@@ -34,8 +35,17 @@ def user(user_id):
         return jsonify(user), 200
 
 
+def errors(e):
+    code = 500
+    if isinstance(e, HTTPException):
+        code = e.code
+    return jsonify(error=str(e)), code
+
+
 def handler(request, context):
     init_db()
+    for cls in HTTPException.__subclasses__():
+        app.register_error_handler(cls, errors)
     return aws_lambda_wsgi.response(app, request, context)
     # print(request)
 
