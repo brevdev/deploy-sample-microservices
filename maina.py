@@ -99,7 +99,7 @@ def put_user(user):
     with foo_db.cursor() as c:
         c.execute(statement, data)
         result_id = c.lastrowid
-        foo_db.commit()
+        # foo_db.commit()
 
     return {
         "id": result_id,
@@ -141,4 +141,4 @@ def delete_user(user_id):
     }
     with foo_db.cursor() as c:
         c.execute(statement, data)
-        foo_db.commit()
+        # foo_db.commit()
