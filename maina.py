@@ -17,12 +17,9 @@ def handler(request):
     if path == "/users":
         if method == "GET":
             users = get_users()
-            results = []
-            for user in users:
-                results.append(user)
             return {
                 "statusCode": 200,
-                "body": results,
+                "body": users.values(),
             }
         if method == "POST":
             payload = request["body"]
