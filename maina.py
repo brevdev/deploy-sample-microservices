@@ -9,5 +9,6 @@ def handler(request):
     current_time = now.strftime("%H:%M:%S")
     return {
         "message": "main.a - " + current_time,
+        "request": request,
     }
 
