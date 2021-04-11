@@ -12,7 +12,10 @@ db = brev.db("foo")
 
 # Entrypoint
 def handler(request, context):
-
+    print("handled")
+    print(request)
+    print(context)
+    
     # execute database upgrades
     init_db()
 
