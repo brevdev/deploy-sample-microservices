@@ -98,7 +98,7 @@ def put_user(user):
     result_id = 0
     with closing(db.cursor()) as c:
         c.execute(statement, data)
-        db.commit()
+        # db.commit()
         result_id = c.lastrowid
 
     return {
