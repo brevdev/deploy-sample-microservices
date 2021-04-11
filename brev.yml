@@ -1,6 +1,6 @@
 version: '2021.03.1'
 services:
-  - name: 'foopython'
+  - name: 'foo'
     public: true
     runtime: 'python3'
     handler: 'maina.handler'
