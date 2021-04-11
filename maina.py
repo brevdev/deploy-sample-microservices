@@ -96,11 +96,19 @@ def put_user(user):
     }
 
     result_id = 0
+    results = {}
     with db.cursor() as c:
         c.execute(statement, data)
         result_id = c.lastrowid
         db.commit()
+        for (user_id, first_name, last_name) in c:
+            results[user_id] = {
+                "id": user_id,
+                "first_name": first_name,
+                "last_name": last_name,
+            }
 
+    print("put: " + results)
     return {
         "id": result_id,
         "first_name": user["first_name"],
