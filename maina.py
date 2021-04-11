@@ -66,7 +66,7 @@ def init_db():
     with db.cursor() as c:
         c.execute(users_table)
         db.commit()
-        print(c)
+        print(str(c))
 
 def get_users():
     statement = (
@@ -101,7 +101,7 @@ def put_user(user):
         c.execute(statement, data)
         result_id = c.lastrowid
         db.commit()
-        print(c)
+        print(str(c))
 
     return {
         "id": result_id,
@@ -144,3 +144,4 @@ def delete_user(user_id):
     with db.cursor() as c:
         c.execute(statement, data)
         db.commit()
+        print(str(c))
