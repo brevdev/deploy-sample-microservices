@@ -6,5 +6,5 @@ services:
     handler: 'maina.handler'
     type: 'http'
 databases:
-  - name: 'foo'
+  - name: 'foo_db'
     engine: 'mysql'

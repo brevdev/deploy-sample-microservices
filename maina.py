@@ -7,7 +7,7 @@ import aws_lambda_wsgi
 import brev
 
 app = Flask(__name__)
-db = brev.db("foo")
+db = brev.db("foo_db")
 
 
 # Entrypoint
