@@ -3,7 +3,7 @@ from datetime import datetime
 import brev
 import json
 
-foo_db = db("foo")
+foo_db = brev.db("foo")
 
 def handler(request):
     init_db()
