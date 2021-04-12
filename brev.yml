@@ -3,7 +3,7 @@ services:
   - name: 'foo'
     public: true
     runtime: 'python3'
-    handler: 'maina.handler'
+    handler: 'main.handler'
     type: 'http'
 databases:
   - name: 'foo'
