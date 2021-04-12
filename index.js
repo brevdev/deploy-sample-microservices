@@ -2,6 +2,14 @@ const brev = require('brev');
 const serverless = require('serverless-http');
 const express = require('express');
 
+class HttpError extends Error {
+  constructor(statusCode, message, ...params) {
+    super(...params);
+    this.statusCode = statusCode;
+    this.message = message;
+  }
+}
+
 const app = express();
 //const db = brev.db("foo");
 
@@ -150,13 +158,4 @@ function deleteUser(userId) {
         throw error;
       }
     });
-}
-
-
-class HttpError extends Error {
-  constructor(statusCode, message, ...params) {
-    super(...params);
-    this.statusCode = statusCode;
-    this.message = message;
-  }
 }
