@@ -31,7 +31,7 @@ app.delete('/users/:userId', (req, res) => {
 
 function errorHandler(err, req, res, next) {
   if (err instanceof HttpError) {
-    res.status(err.statusCode)
+    res.status(err.statusCode);
     res.render('error', { error: err.message });
   }
   else {
@@ -47,10 +47,10 @@ module.exports.handler = async (request, context) => {
 
   const result = await handler(request, context);
   return result;
-}
+};
 
 function initDb() {
-  var usersTable =
+  let usersTable =
     "CREATE TABLE IF NOT EXISTS `users` (" +
     "  `id` int(11) NOT NULL AUTO_INCREMENT," +
     "  `first_name` varchar(14) NOT NULL," +
@@ -68,7 +68,7 @@ function initDb() {
 }
 
 function getUsers() {
-  var users = []
+  let users = [];
 
   db.query(
     "SELECT id, first_name, last_name FROM users;",
@@ -89,7 +89,7 @@ function getUsers() {
 }
 
 function putUser(user) {
-  user_id = 0;
+  let user_id = 0;
 
   db.query(
     "INSERT INTO users SET ?;",
@@ -105,11 +105,11 @@ function putUser(user) {
     "id": user_id,
     "first_name": user["first_name"],
     "last_name": user["last_name"],
-  }
+  };
 }
 
 function getUser(userId) {
-  var users = []
+  let users = [];
 
   let statement =
     "SELECT id, first_name, last_name FROM users " +
