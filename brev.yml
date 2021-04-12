@@ -2,8 +2,8 @@ version: '2021.03.1'
 services:
   - name: 'foo'
     public: true
-    runtime: 'python3'
-    handler: 'maina.handler'
+    runtime: 'nodejs14'
+    handler: 'index.handler'
     type: 'http'
 databases:
   - name: 'foo'
