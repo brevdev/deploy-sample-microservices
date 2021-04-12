@@ -3,7 +3,7 @@ const serverless = require('serverless-http');
 const express = require('express');
 
 const app = express();
-const db = brev.db("foo");
+//const db = brev.db("foo");
 
 app.use(express.json());
 app.use(errorHandler());
