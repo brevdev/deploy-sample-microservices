@@ -11,14 +11,20 @@ class HttpError extends Error {
 }
 
 const app = express();
-//const db = brev.db("foo");
+// const db = await brev.db("foo");
 
 app.use(express.json());
-app.use(errorHandler());
+// app.use(errorHandler());
 
 app.get('/users', (req, res) => {
-  let users = getUsers();
-  return res.status(200).send(users);
+  return getUsers()
+    .then((users) => {
+      return res.status(200).send(users);
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).json(err);
+    });
 });
 
 app.post('/users', (req, res) => {
@@ -37,27 +43,27 @@ app.delete('/users/:userId', (req, res) => {
   return res.status(202).send(user);
 });
 
-function errorHandler(err, req, res, next) {
-  if (err instanceof HttpError) {
-    res.status(err.statusCode);
-    res.render('error', { error: err.message });
-  }
-  else {
-    res.status(500);
-    res.render('error', { error: err });
-  }
-  return;
-}
+// function errorHandler(err, req, res, next) {
+//   if (err instanceof HttpError) {
+//     res.status(err.statusCode);
+//     res.render('error', { error: err.message });
+//   }
+//   else {
+//     res.status(500);
+//     res.render('error', { error: err });
+//   }
+//   return;
+// }
 
 const handler = serverless(app);
 module.exports.handler = async (request, context) => {
-  initDb();
+  await initDb();
 
   const result = await handler(request, context);
   return result;
 };
 
-function initDb() {
+async function initDb() {
   let usersTable =
     "CREATE TABLE IF NOT EXISTS `users` (" +
     "  `id` int(11) NOT NULL AUTO_INCREMENT," +
@@ -66,34 +72,38 @@ function initDb() {
     "  PRIMARY KEY (`id`)" +
     ") ENGINE=InnoDB";
 
-  db.query(
-    usersTable,
-    function (error, results, fields) {
-      if (error) {
-        throw error;
-      }
-    });
+  return brev.db("foo")
+    .then((connection) => {
+      connection.query(
+        usersTable,
+        function (error, results, fields) {
+          if (error) {
+            throw error;
+          }
+        });
+    })
 }
 
-function getUsers() {
+async function getUsers() {
   let users = [];
 
-  db.query(
-    "SELECT id, first_name, last_name FROM users;",
-    function (error, results, fields) {
-      if (error) {
-        throw error;
-      }
-      results.forEach(result => {
-        users.push({
-          "id": result["id"],
-          "first_name": result["first_name"],
-          "last_name": result["last_name"],
+  return brev.db("foo").then(connection => {
+    connection.query(
+      "SELECT id, first_name, last_name FROM users;",
+      (error, results, fields) => {
+        if (error) {
+          throw error;
+        }
+        results.forEach(result => {
+          users.push({
+            "id": result["id"],
+            "first_name": result["first_name"],
+            "last_name": result["last_name"],
+          });
         });
       });
-    });
-
-  return users;
+    return users;
+  });
 }
 
 function putUser(user) {
