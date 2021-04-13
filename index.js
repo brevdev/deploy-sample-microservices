@@ -43,7 +43,7 @@ app.post('/users', (req, res) => {
       else {
         return res.status(500).json(err);
       }
-    })
+    });
 });
 
 app.get('/users/:userId', (req, res) => {
@@ -59,7 +59,7 @@ app.get('/users/:userId', (req, res) => {
       else {
         return res.status(500).json(err);
       }
-    })
+    });
 });
 
 app.delete('/users/:userId', (req, res) => {
@@ -75,7 +75,7 @@ app.delete('/users/:userId', (req, res) => {
       else {
         return res.status(500).json(err);
       }
-    })
+    });
 });
 
 const handler = serverless(app);
@@ -97,25 +97,29 @@ async function initDb() {
 
   return brev.db("foo")
     .then((connection) => {
-      connection.query(
-        usersTable,
-        function (error, results, fields) {
+      return new Promise((resolve, reject) => {
+        connection.query(usersTable, (error, results, fields) => {
           if (error) {
-            throw error;
+            return reject(error);
+          }
+          else {
+            return resolve();
           }
         });
-    })
+      });
+    });
 }
 
 async function getUsers() {
   return brev.db("foo").then(connection => {
-    let users = [];
-    connection.query(
-      "SELECT id, first_name, last_name FROM users;",
-      (error, results, fields) => {
+
+    return new Promise((resolve, reject) => {
+
+      connection.query("SELECT id, first_name, last_name FROM users;", (error, results, fields) => {
         if (error) {
-          throw error;
+          return reject(error);
         }
+        let users = [];
         results.forEach(result => {
           users.push({
             "id": result["id"],
@@ -123,70 +127,82 @@ async function getUsers() {
             "last_name": result["last_name"],
           });
         });
+        return resolve(users);
       });
 
-    return users;
+
+    });
+
   });
 }
 
 async function putUser(user) {
   return brev.db("foo").then(connection => {
-    let user_id = 0;
-    connection.query(
-      "INSERT INTO users SET ?;",
-      user,
-      function (error, results, fields) {
+
+    return new Promise((resolve, reject) => {
+
+      connection.query("INSERT INTO users SET ?;", user, (error, results, fields) => {
         if (error) {
-          throw error;
+          return reject(error);
         }
-        user_id = results.insertId;
+        return resolve({
+          "id": results.insertId,
+          "first_name": user["first_name"],
+          "last_name": user["last_name"],
+        });
+
       });
 
-    return {
-      "id": user_id,
-      "first_name": user["first_name"],
-      "last_name": user["last_name"],
-    };
+    });
+
   });
 }
 
 async function getUser(userId) {
   return brev.db("foo").then(connection => {
-    let users = [];
-    connection.query(
-      "SELECT id, first_name, last_name FROM users " +
-      "WHERE id = ?",
-      [userId],
-      function (error, results, fields) {
-        if (error) {
-          throw error;
-        }
-        results.forEach(result => {
-          users.push({
-            "id": result["id"],
-            "first_name": result["first_name"],
-            "last_name": result["last_name"],
-          });
-        });
-      });
 
-    if (users.length === 0) {
-      throw new HttpError(404, "Not found");
-    }
-    return users[0];
+    return new Promise((resolve, reject) => {
+
+      connection.query(
+        "SELECT id, first_name, last_name FROM users WHERE id = ?", [userId], (error, results, fields) => {
+          if (error) {
+            return reject(error);
+          }
+
+          let users = [];
+          results.forEach(result => {
+            users.push({
+              "id": result["id"],
+              "first_name": result["first_name"],
+              "last_name": result["last_name"],
+            });
+          });
+
+          if (users.length === 0) {
+            return reject(new HttpError(404, "Not found"));
+          }
+          else {
+            return resolve(users[0]);
+          }
+        });
+    });
   });
+
 }
 
 async function deleteUser(userId) {
   return brev.db("foo").then(connection => {
-    connection.query(
-      "DELETE FROM users " +
-      "WHERE id = ?",
-      [userId],
-      function (error, results, fields) {
-        if (error) {
-          throw error;
-        }
-      });
+
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "DELETE FROM users WHERE id = ?", [userId], (error, results, fields) => {
+          if (error) {
+            return reject(error);
+          }
+          else {
+            return resolve();
+          }
+        });
+    });
   });
 }
