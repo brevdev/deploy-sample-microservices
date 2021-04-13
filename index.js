@@ -11,10 +11,8 @@ class HttpError extends Error {
 }
 
 const app = express();
-// const db = await brev.db("foo");
 
 app.use(express.json());
-// app.use(errorHandler());
 
 app.get('/users', (req, res) => {
   return getUsers()
@@ -23,37 +21,62 @@ app.get('/users', (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      return res.status(500).json(err);
+      if (err instanceof HttpError) {
+        return res.status(err.statusCode).json(err.message);
+      }
+      else {
+        return res.status(500).json(err);
+      }
     });
 });
 
 app.post('/users', (req, res) => {
-  let payload = req.body;
-  let user = putUser(payload);
-  return res.status(201).send(user);
+  return putUser(req.body)
+    .then((user) => {
+      return res.status(201).send(user);
+    })
+    .catch((err) => {
+      console.log(err);
+      if (err instanceof HttpError) {
+        return res.status(err.statusCode).json(err.message);
+      }
+      else {
+        return res.status(500).json(err);
+      }
+    })
 });
 
 app.get('/users/:userId', (req, res) => {
-  let user = getUser(req.params.userId);
-  return res.status(200).send(user);
+  return getUser(req.params.userId)
+    .then((user) => {
+      return res.status(200).send(user);
+    })
+    .catch((err) => {
+      console.log(err);
+      if (err instanceof HttpError) {
+        return res.status(err.statusCode).json(err.message);
+      }
+      else {
+        return res.status(500).json(err);
+      }
+    })
 });
 
 app.delete('/users/:userId', (req, res) => {
-  let user = deleteUser(req.params.userId);
-  return res.status(202).send(user);
+  return deleteUser(req.params.userId)
+    .then((user) => {
+      return res.status(202).send(user);
+    })
+    .catch((err) => {
+      console.log(err);
+      if (err instanceof HttpError) {
+        return res.status(err.statusCode).json(err.message);
+      }
+      else {
+        return res.status(500).json(err);
+      }
+    })
 });
-
-// function errorHandler(err, req, res, next) {
-//   if (err instanceof HttpError) {
-//     res.status(err.statusCode);
-//     res.render('error', { error: err.message });
-//   }
-//   else {
-//     res.status(500);
-//     res.render('error', { error: err });
-//   }
-//   return;
-// }
 
 const handler = serverless(app);
 module.exports.handler = async (request, context) => {
@@ -85,9 +108,8 @@ async function initDb() {
 }
 
 async function getUsers() {
-  let users = [];
-
   return brev.db("foo").then(connection => {
+    let users = [];
     connection.query(
       "SELECT id, first_name, last_name FROM users;",
       (error, results, fields) => {
@@ -102,70 +124,69 @@ async function getUsers() {
           });
         });
       });
+
     return users;
   });
 }
 
-function putUser(user) {
-  let user_id = 0;
+async function putUser(user) {
+  return brev.db("foo").then(connection => {
+    let user_id = 0;
+    connection.query(
+      "INSERT INTO users SET ?;",
+      user,
+      function (error, results, fields) {
+        if (error) {
+          throw error;
+        }
+        user_id = results.insertId;
+      });
 
-  db.query(
-    "INSERT INTO users SET ?;",
-    user,
-    function (error, results, fields) {
-      if (error) {
-        throw error;
-      }
-      user_id = results.insertId;
-    });
-
-  return {
-    "id": user_id,
-    "first_name": user["first_name"],
-    "last_name": user["last_name"],
-  };
+    return {
+      "id": user_id,
+      "first_name": user["first_name"],
+      "last_name": user["last_name"],
+    };
+  });
 }
 
-function getUser(userId) {
-  let users = [];
-
-  let statement =
-    "SELECT id, first_name, last_name FROM users " +
-    "WHERE id = ?";
-
-  db.query(
-    statement,
-    [userId],
-    function (error, results, fields) {
-      if (error) {
-        throw error;
-      }
-      results.forEach(result => {
-        users.push({
-          "id": result["id"],
-          "first_name": result["first_name"],
-          "last_name": result["last_name"],
+async function getUser(userId) {
+  return brev.db("foo").then(connection => {
+    let users = [];
+    connection.query(
+      "SELECT id, first_name, last_name FROM users " +
+      "WHERE id = ?",
+      [userId],
+      function (error, results, fields) {
+        if (error) {
+          throw error;
+        }
+        results.forEach(result => {
+          users.push({
+            "id": result["id"],
+            "first_name": result["first_name"],
+            "last_name": result["last_name"],
+          });
         });
       });
-    });
 
-  if (users.length === 0) {
-    throw new HttpError(404, "Not found");
-  }
-  return users[0];
+    if (users.length === 0) {
+      throw new HttpError(404, "Not found");
+    }
+    return users[0];
+  });
 }
 
-function deleteUser(userId) {
-  let statement =
-    "DELETE FROM users " +
-    "WHERE id = ?";
-
-  db.query(
-    statement,
-    [userId],
-    function (error, results, fields) {
-      if (error) {
-        throw error;
-      }
-    });
+async function deleteUser(userId) {
+  return brev.db("foo").then(connection => {
+    connection.query(
+      "DELETE FROM users " +
+      "WHERE id = ?",
+      [userId],
+      function (error, results, fields) {
+        if (error) {
+          throw error;
+        }
+      });
+  });
 }
