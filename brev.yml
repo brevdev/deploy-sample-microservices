@@ -5,6 +5,15 @@ services:
     runtime: 'nodejs14'
     handler: 'index.handler'
     type: 'http'
+  - name: 'sourcejs'
+    public: true
+    runtime: 'nodejs14'
+    handler: 'source.handler'
+    type: 'http'
+  - name: 'targetjs'
+    runtime: 'nodejs14'
+    handler: 'target.handler'
+    type: 'http'
 databases:
   - name: 'foo'
     engine: 'mysql'
