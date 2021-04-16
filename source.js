@@ -7,7 +7,7 @@ module.exports.handler = async (event, context) => {
         .get("/foo", {})
         .then((response) => {
             console.log("out:")
-            console.log(event);
+            console.log(response);
             return response;
         });
 };
