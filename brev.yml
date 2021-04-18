@@ -2,7 +2,7 @@ version: '2021.03.1'
 services:
   - name: 'foo'
     public: true
-    runtime: 'python3'
+    runtime: 'python3.8'
     handler: 'main.handler'
     type: 'http'
 databases:
