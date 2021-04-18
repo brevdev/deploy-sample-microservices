@@ -5,6 +5,6 @@ def handler(request, context):
     current_time = now.strftime("%H:%M:%S")
     return {
         "statusCode": 200,
-        "body": main.a - " + current_time
+        "body": "main.a - " + current_time
     }
 
