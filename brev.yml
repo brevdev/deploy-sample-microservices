@@ -1,11 +1,11 @@
 version: '2021.03.1'
 services:
   - name: 'foopython'
-    runtime: 'python3'
+    runtime: 'python3.8'
     handler: 'maina.handler'
     type: 'http'
   - name: 'barpython'
-    runtime: 'python3'
+    runtime: 'python3.8'
     handler: 'mainb.handler'
     type: 'http'
   - name: 'foonode'

@@ -1,7 +1,12 @@
 const brev = require('brev');
 
+
 module.exports.handler = (request) => {
-  return brev.http_request('foopython').then(v => {
-    return v['Payload']
-  });
+  return brev.service("foopython")
+      .get("/foo", {})
+      .then((response) => {
+        console.log("out:")
+        console.log(response);
+        return response;
+    });
 }

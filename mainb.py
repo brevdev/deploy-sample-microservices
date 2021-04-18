@@ -1,5 +1,7 @@
 import brev
 
 def handler(request):
-    return brev.http_request("foonode")['Payload'].read().decode()
+    response = brev.service("foonode").get("/foo", "")
+    print(response)
+    return response
 
