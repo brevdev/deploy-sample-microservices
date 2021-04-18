@@ -5,6 +5,7 @@ services:
     handler: 'maina.handler'
     type: 'http'
   - name: 'barpython'
+    public: true
     runtime: 'python3.8'
     handler: 'mainb.handler'
     type: 'http'
