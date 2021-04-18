@@ -1,7 +1,7 @@
 const brev = require('brev');
 
 
-module.exports.handler = (request) => {
+module.exports.handler = (request, context) => {
   return brev.service("foopython")
       .get("/foo", {})
       .then((response) => {
